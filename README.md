@@ -4,9 +4,9 @@ How to run NuSMV:
 Assuming that the appropriate binaries are installed (http://nusmv.fbk.eu/NuSMV/download/getting-v2.html). Run the following command
 >numsmv -int [filename]
 
-Filename is optional, if it is specified then the model in filename is loaded directly.
+Filename is optional, if it is specified then the model in filename is loaded directly. After running the above command, the NuSMV prompt is provided.
 
-If Filename is not specified then the following steps needs to be run
+If Filename is not specified then the following steps needs to be run in the prompt
 >read_model -i [filename]
 
 >go (This will check the model for errors and will build the model)

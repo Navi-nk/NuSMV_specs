@@ -1,0 +1,27 @@
+MODULE thread(y)
+VAR 
+	state:{nc, w, c, exit};
+ASSIGN
+	init(state):=nc;
+	next(state):= case
+						state = nc : {nc , w} ;
+						state = w & y>0 : c;
+						state = c : {c,exit};
+						state = exit:nc;
+						TRUE:state;
+						esac;
+						
+	next(y):= case
+					state = w & y>0: y - 1;
+					state = exit & y=0: y + 1;
+					TRUE:y;
+					esac;
+	
+MODULE main
+VAR
+	y-main: 0..1;
+	prg1: process thread(y-main);
+	prg2: process thread(y-main);
+	
+ASSIGN
+	init(y-main):= 1;
