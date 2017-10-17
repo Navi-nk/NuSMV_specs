@@ -1,0 +1,16 @@
+MODULE light(other_state)
+VAR 
+	state:{red, yellow, green};
+ASSIGN
+	init(state):=red;
+	next(state):= case
+						state = red &other_state = red: {red,yellow} ;
+						state = yellow : green;
+						state = green : {green,red};
+						TRUE : state;
+						esac;
+	
+MODULE main
+VAR
+	tl1: process light(tl2.state);
+	tl2: process light(tl1.state);
