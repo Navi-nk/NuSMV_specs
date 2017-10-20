@@ -1,0 +1,53 @@
+MODULE philosopher(i, left, right)
+VAR
+	location:{
+	think,
+	req_right,
+	req_left,
+	have_right,
+	have_left,
+	eat,
+	return};
+ASSIGN
+	init(location):= think;
+	next(location):= case
+					 location=think:{think,req_left,req_right};
+					 location = req_left & left=i: have_left;
+					 location = have_left & right=i: eat;
+					 location = req_right & right=i: have_right;
+					 location = have_right & left=i: eat;
+					 location = eat:{eat,return};
+					 location=return:think;
+					 TRUE : location;
+					 esac;
+	next(left):= case
+					location = return & i < 3: i + 1;
+					location = return & i = 3: 0;
+					TRUE : left;
+					esac;
+	next(right):= case	
+					location = return & i > 0: i - 1;
+					location = return & i = 0: 3;
+					TRUE : right;
+					esac;
+	
+FAIRNESS running; -- to make sure that the process are schedules. 
+FAIRNESS !(location=eat);  -- to make sure that the model does not stay in eat state infinetely long
+FAIRNESS !(location=think); -- to make sure that the model does not stay in think state infinetely long
+	
+MODULE main
+VAR	
+	sticks: array 0..3 of {0 ,1, 2, 3};
+	phil0: process philosopher(0,sticks[0],sticks[3]);
+	phil1: process philosopher(1,sticks[1],sticks[0]);
+	phil2: process philosopher(2,sticks[2],sticks[1]);
+	phil3: process philosopher(3,sticks[3],sticks[2]);
+ASSIGN
+	init(sticks[0]):=0;
+	init(sticks[1]):=2;
+	init(sticks[2]):=2;
+	init(sticks[3]):=0;
+	
+	
+--check_ltlspec -p "G F(phil0.location = eat) & G F(phil1.location = eat) & G F(phil2.location = eat) & G F(phil2.location = eat)"
+--This will check for deadlock
